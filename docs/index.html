@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>@three-ws/autopilot-mcp: An AI agent&#39;s own autonomous-execution control plane over MCP</title>
+<meta name="description" content="An AI agent&#39;s own autonomous-execution control plane over MCP — set autopilot scopes, a daily SOL spend cap, and auto-execute, then run the propose → execute → undo loop. The agent spends SOL and never sells $THREE. Authenticated, write-heavy; scope + spend enforcement is server-side.">
+<link rel="canonical" href="https://nirholas.github.io/autopilot-mcp/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="three.ws">
+<meta property="og:title" content="@three-ws/autopilot-mcp">
+<meta property="og:description" content="An AI agent&#39;s own autonomous-execution control plane over MCP — set autopilot scopes, a daily SOL spend cap, and auto-execute, then run the propose → execute → undo loop. The agent spends SOL and never sells $THREE. Authenticated, write-heavy; scope + spend enforcement is server-side.">
+<meta property="og:url" content="https://nirholas.github.io/autopilot-mcp/">
+<meta property="og:image" content="https://nirholas.github.io/autopilot-mcp/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="@three-ws/autopilot-mcp">
+<meta name="twitter:description" content="An AI agent&#39;s own autonomous-execution control plane over MCP — set autopilot scopes, a daily SOL spend cap, and auto-execute, then run the propose → execute → undo loop. The agent spends SOL and never sells $THREE. Authenticated, write-heavy; scope + spend enforcement is server-side.">
+<meta name="twitter:image" content="https://nirholas.github.io/autopilot-mcp/og.png">
+<meta name="keywords" content="mcp, three.ws, solana, autopilot, autonomous-agents, agent-guardrails, spend-limits, ai-agent, model-context-protocol, mcp-server, ai-agents">
+<link rel="alternate" type="text/plain" href="llms.txt" title="llms.txt">
+<link rel="icon" href="https://three.ws/three-ws-mcp-icon.svg" type="image/svg+xml">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareSourceCode","name":"@three-ws/autopilot-mcp","description":"An AI agent's own autonomous-execution control plane over MCP — set autopilot scopes, a daily SOL spend cap, and auto-execute, then run the propose → execute → undo loop. The agent spends SOL and never sells $THREE. Authenticated, write-heavy; scope + spend enforcement is server-side.","codeRepository":"https://github.com/nirholas/autopilot-mcp","programmingLanguage":"JavaScript","license":"https://spdx.org/licenses/Apache-2.0.html","version":"0.2.2","url":"https://nirholas.github.io/autopilot-mcp/","author":{"@type":"Organization","name":"three.ws","url":"https://three.ws"},"keywords":"mcp, three.ws, solana, autopilot, autonomous-agents, agent-guardrails, spend-limits, ai-agent, model-context-protocol, mcp-server, ai-agents"}</script>
+<style>:root{--bg:#fff;--fg:#111418;--mut:#586069;--line:#e3e6ea;--acc:#2563eb;--code:#f4f6f8;--card:#fafbfc}
+@media(prefers-color-scheme:dark){:root{--bg:#0b0d10;--fg:#e8eaed;--mut:#9aa3ad;--line:#232830;--acc:#6ea0ff;--code:#14181d;--card:#10141a}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+a{color:var(--acc)}a:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:4px}
+header.bar{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1100px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{font-weight:700;text-decoration:none;color:var(--fg)}
+.bar nav{margin-left:auto;display:flex;gap:16px;font-size:14px}
+.bar nav a{color:var(--mut);text-decoration:none;transition:color .15s}.bar nav a:hover{color:var(--fg)}
+.hero{max-width:1100px;margin:0 auto;padding:48px 16px 24px}
+.hero h1{font-size:clamp(28px,5vw,44px);line-height:1.15;margin:0 0 12px;letter-spacing:-.02em}
+.hero p{color:var(--mut);max-width:70ch;font-size:18px;margin:0 0 24px}
+.install{display:flex;align-items:center;gap:8px;max-width:620px;background:var(--code);border:1px solid var(--line);border-radius:10px;padding:6px 6px 6px 14px}
+.install code{flex:1;overflow-x:auto;white-space:nowrap;font:14px ui-monospace,SFMono-Regular,Menlo,monospace}
+.install button{border:0;background:var(--acc);color:#fff;border-radius:7px;padding:8px 14px;font:600 13px system-ui;cursor:pointer;transition:transform .12s,opacity .12s}
+.install button:hover{opacity:.9}.install button:active{transform:scale(.96)}
+.cta{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.cta a{padding:9px 16px;border:1px solid var(--line);border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;color:var(--fg);transition:border-color .15s,transform .15s}
+.cta a:hover{border-color:var(--acc);transform:translateY(-1px)}.cta a.pri{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.layout{max-width:1100px;margin:0 auto;padding:8px 16px 64px;display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:40px}
+@media(max-width:860px){.layout{grid-template-columns:minmax(0,1fr)}.toc{display:none}}
+.toc{position:sticky;top:76px;align-self:start;font-size:14px;border-left:1px solid var(--line);padding-left:16px}
+.toc p{margin:0 0 8px;font-weight:700;color:var(--mut);text-transform:uppercase;font-size:12px;letter-spacing:.06em}
+.toc ul{list-style:none;margin:0;padding:0}.toc li{margin:6px 0}.toc a{color:var(--mut);text-decoration:none}.toc a:hover{color:var(--fg)}
+main{min-width:0;overflow-wrap:anywhere}main pre code{overflow-wrap:normal}main img{max-width:100%;height:auto}
+main h2{margin-top:2.2em;padding-bottom:.3em;border-bottom:1px solid var(--line)}
+.anchor{margin-left:-1.1em;padding-right:.4em;text-decoration:none;opacity:0;color:var(--mut)}h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:1}
+pre{background:var(--code);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:14px;line-height:1.5}
+code{font:0.9em ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--code);padding:.15em .35em;border-radius:5px}pre code{background:none;padding:0}
+table{border-collapse:collapse;display:block;overflow-x:auto;max-width:100%}th,td{border:1px solid var(--line);padding:8px 12px;text-align:left}th{background:var(--card)}
+blockquote{margin:1em 0;padding:.2em 1em;border-left:4px solid var(--line);color:var(--mut)}
+footer{border-top:1px solid var(--line);color:var(--mut);font-size:14px}
+.foot-in{max-width:1100px;margin:0 auto;padding:24px 16px;display:flex;gap:16px;flex-wrap:wrap}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}</style>
+</head>
+<body>
+<header class="bar"><div class="bar-in">
+<a class="brand" href="https://nirholas.github.io/autopilot-mcp/">@three-ws/autopilot-mcp</a>
+<nav aria-label="Project links"><a href="https://github.com/nirholas/autopilot-mcp">GitHub</a><a href="https://www.npmjs.com/package/@three-ws/autopilot-mcp">npm</a><a href="llms.txt">llms.txt</a><a href="https://three.ws">three.ws</a></nav>
+</div></header>
+<section class="hero">
+<h1>@three-ws/autopilot-mcp</h1>
+<p>An AI agent&#39;s own autonomous-execution control plane over MCP — set autopilot scopes, a daily SOL spend cap, and auto-execute, then run the propose → execute → undo loop. The agent spends SOL and never sells $THREE. Authenticated, write-heavy; scope + spend enforcement is server-side.</p>
+<div class="install" role="group" aria-label="Install command"><code>npx -y @three-ws/autopilot-mcp</code><button type="button" data-copy="npx -y @three-ws/autopilot-mcp">Copy</button></div>
+<div class="cta"><a class="pri" href="https://github.com/nirholas/autopilot-mcp">View on GitHub</a><a href="https://github.com/nirholas/autopilot-mcp/stargazers">Star the repo</a><a href="https://registry.modelcontextprotocol.io/?q=io.github.nirholas%2Fautopilot-mcp">MCP Registry</a></div>
+</section>
+<div class="layout">
+<main id="content"><p align="center"><strong>An AI agent's own autonomous-execution control plane — set autopilot scopes, a daily SOL spend cap, and auto-execute, then run the propose → execute → undo loop, all from any MCP client.</strong></p><p align="center">
+  <a href="https://www.npmjs.com/package/@three-ws/autopilot-mcp"><img alt="npm" src="https://img.shields.io/npm/v/@three-ws/autopilot-mcp?logo=npm&color=cb3837"></a>
+  <img alt="license" src="https://img.shields.io/npm/l/@three-ws/autopilot-mcp?color=3b82f6">
+  <img alt="node" src="https://img.shields.io/node/v/@three-ws/autopilot-mcp?color=339933&logo=node.js">
+  <a href="https://registry.modelcontextprotocol.io/?q=io.github.nirholas"><img alt="MCP Registry" src="https://img.shields.io/badge/MCP%20Registry-io.github.nirholas-0ea5e9"></a>
+  <a href="https://three.ws"><img alt="three.ws" src="https://img.shields.io/badge/built%20by-three.ws-000"></a>
+</p><hr>
+<blockquote>
+<p>A <a href="https://modelcontextprotocol.io">Model Context Protocol</a> server that gives an AI agent <strong>its own execution control plane</strong> over stdio. The agent configures the boundaries it is allowed to act within — capability scopes, a daily SOL spend ceiling, auto-execute and confirmation policy — then drives the full <strong>propose → review → execute → undo</strong> loop. No human in the loop, but every boundary is <strong>enforced server-side</strong>: an out-of-scope or over-budget action is denied, never executed.</p>
+</blockquote>
+<p>This is the keystone of the autonomous-agent story. Autopilot config and execution used to live only behind the three.ws UI/API; this server exposes them so an agent can manage its own guardrails and act within them.</p>
+<blockquote>
+<p>⚠️ <strong>This server is authenticated and write-heavy.</strong> <code>execute_proposal</code> can move <strong>real SOL</strong> on Solana mainnet and is <strong>irreversible</strong>. It sends native SOL only — the agent never sells or sends <strong>$THREE</strong> (it only buys, holds, or burns it). Scopes, the daily SOL spend cap, and confirmation are all enforced on the three.ws backend — this server cannot bypass them.</p>
+</blockquote>
+<h2 id="install"><a class="anchor" href="#install" aria-label="Link to this section">#</a>Install</h2>
+<pre><code class="language-bash">npm install @three-ws/autopilot-mcp
+</code></pre>
+<p>Or run with <code>npx</code> (no install):</p>
+<pre><code class="language-bash">npx @three-ws/autopilot-mcp
+</code></pre>
+<h2 id="quick-start"><a class="anchor" href="#quick-start" aria-label="Link to this section">#</a>Quick start</h2>
+<p><strong>Claude Code</strong>, one line (supply your three.ws credential):</p>
+<pre><code class="language-bash">THREE_WS_API_KEY=sk_live_… claude mcp add autopilot -- npx -y @three-ws/autopilot-mcp
+</code></pre>
+<p><strong>Claude Desktop / Cursor</strong> (<code>claude_desktop_config.json</code> or <code>mcp.json</code>):</p>
+<pre><code class="language-json">{
+	&quot;mcpServers&quot;: {
+		&quot;autopilot&quot;: {
+			&quot;command&quot;: &quot;npx&quot;,
+			&quot;args&quot;: [&quot;-y&quot;, &quot;@three-ws/autopilot-mcp&quot;],
+			&quot;env&quot;: {
+				&quot;THREE_WS_API_KEY&quot;: &quot;sk_live_…&quot;
+			}
+		}
+	}
+}
+</code></pre>
+<p>Inspect the surface with the MCP Inspector:</p>
+<pre><code class="language-bash">THREE_WS_API_KEY=sk_live_… npx -y @modelcontextprotocol/inspector npx @three-ws/autopilot-mcp
+</code></pre>
+<h2 id="authentication"><a class="anchor" href="#authentication" aria-label="Link to this section">#</a>Authentication</h2>
+<p>Every autopilot endpoint is <strong>owner-only</strong>, so this server is authenticated. Set <strong><code>THREE_WS_API_KEY</code></strong> to the agent owner&#39;s three.ws credential — either a three.ws <strong>API key</strong> (<code>sk_live_…</code> / <code>sk_test_…</code>) or an <strong>OAuth access token</strong>. It is sent as <code>Authorization: Bearer …</code> on every request and identifies the owning user; the agent can only manage agents that user owns. The credential can authorize <strong>real SOL transfers</strong> via <code>execute_proposal</code> — store it like a password. <code>THREE_WS_TOKEN</code> and <code>THREE_WS_BEARER</code> are accepted as aliases.</p>
+<h2 id="tools"><a class="anchor" href="#tools" aria-label="Link to this section">#</a>Tools</h2>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Type</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>get_autopilot_config</code></td>
+<td>read-only</td>
+<td>Read the agent&#39;s guardrails: enabled, scopes, auto-execute, daily SOL cap, confirmation policy — plus trust.</td>
+</tr>
+<tr>
+<td><code>set_autopilot_config</code></td>
+<td>write · idempotent</td>
+<td>Update those guardrails with a partial patch (grant scopes, set the daily SOL ceiling, arm/disarm). No action taken.</td>
+</tr>
+<tr>
+<td><code>generate_proposals</code></td>
+<td>write</td>
+<td>Run the agent&#39;s mind: turn high-salience memories + reflections into real, provenance-cited candidate actions.</td>
+</tr>
+<tr>
+<td><code>list_proposals</code></td>
+<td>read-only</td>
+<td>The proposal queue — ids, kinds, rationales, params, status, cited sources. Filter by status.</td>
+</tr>
+<tr>
+<td><code>dryrun_proposal</code></td>
+<td>read-only</td>
+<td>Preview what executing a proposal <em>would</em> do (scope / cap / balance checks), without taking any action.</td>
+</tr>
+<tr>
+<td><code>adjust_proposal</code></td>
+<td>write · idempotent</td>
+<td>Edit a pending proposal&#39;s params before executing (tune a threshold, amount, cadence). Validated server-side.</td>
+</tr>
+<tr>
+<td><code>execute_proposal</code></td>
+<td><strong>write · destructive</strong></td>
+<td>Take the real action. ⚠️ A <code>wallet_transfer</code> moves real SOL on mainnet, irreversible — needs <code>confirm:true</code>. Never sends $THREE.</td>
+</tr>
+<tr>
+<td><code>dismiss_proposal</code></td>
+<td>write</td>
+<td>Drop a pending proposal; records a feedback memory so the agent stops proposing it.</td>
+</tr>
+<tr>
+<td><code>undo_action</code></td>
+<td>write</td>
+<td>Reverse a reversible execution (delete the alert rule / briefing); records a feedback memory. SOL transfers can&#39;t be undone.</td>
+</tr>
+<tr>
+<td><code>list_autopilot_activity</code></td>
+<td>read-only</td>
+<td>The append-only signed receipts log — every autonomous action, its outcome, provenance, and signature.</td>
+</tr>
+<tr>
+<td><code>compute_trust</code></td>
+<td>read-only</td>
+<td>The agent&#39;s earned trust level (sandbox → trusted → autonomous), computed from real action history.</td>
+</tr>
+</tbody></table>
+<p>The five read tools reflect live state (proposals, receipts, trust move between calls), so none are idempotent. <code>set_autopilot_config</code> and <code>adjust_proposal</code> are idempotent writes (re-applying the same values is a no-op). <code>generate_proposals</code>, <code>execute_proposal</code>, <code>dismiss_proposal</code>, and <code>undo_action</code> each take a real action.</p>
+<h3 id="input-parameters"><a class="anchor" href="#input-parameters" aria-label="Link to this section">#</a>Input parameters</h3>
+<p>Every tool takes <strong><code>agentId</code></strong> (the UUID of an agent you own) except <code>list_autopilot_activity</code>, where it is optional (omit to aggregate across all your agents).</p>
+<ul>
+<li><strong><code>get_autopilot_config</code></strong> / <strong><code>compute_trust</code></strong> / <strong><code>generate_proposals</code></strong> — <code>agentId</code>.</li>
+<li><strong><code>set_autopilot_config</code></strong> — <code>agentId</code>, plus any of: <code>enabled</code> (bool), <code>scopes</code> (<code>{ create_alert?, briefing?, wallet_transfer? }</code>), <code>autoExecute</code> (<code>{ create_alert?, briefing? }</code>), <code>dailySpendSol</code> (number, SOL; 0 disables spending), <code>requireConfirm</code> (bool).</li>
+<li><strong><code>list_proposals</code></strong> — <code>agentId</code>, <code>status</code> (<code>pending</code> | <code>executed</code> | <code>dismissed</code> | <code>undone</code> | <code>failed</code>), <code>limit</code> (1–200).</li>
+<li><strong><code>dryrun_proposal</code></strong> / <strong><code>dismiss_proposal</code></strong> / <strong><code>undo_action</code></strong> — <code>agentId</code>, <code>proposalId</code>.</li>
+<li><strong><code>adjust_proposal</code></strong> — <code>agentId</code>, <code>proposalId</code>, <code>params</code> (full replacement params for the proposal&#39;s kind).</li>
+<li><strong><code>execute_proposal</code></strong> — <code>agentId</code>, <code>proposalId</code>, <code>confirm</code> (bool — required for an irreversible SOL transfer).</li>
+<li><strong><code>list_autopilot_activity</code></strong> — <code>agentId</code> (optional), <code>limit</code> (1–200), <code>cursor</code> (from a prior <code>next_cursor</code>).</li>
+</ul>
+<h2 id="the-loop"><a class="anchor" href="#the-loop" aria-label="Link to this section">#</a>The loop</h2>
+<pre><code class="language-jsonc">// 1. Grant the agent a reversible capability
+// set_autopilot_config
+&gt; { &quot;agentId&quot;: &quot;…&quot;, &quot;enabled&quot;: true, &quot;scopes&quot;: { &quot;create_alert&quot;: true } }
+{ &quot;ok&quot;: true, &quot;config&quot;: { &quot;enabled&quot;: true, &quot;scopes&quot;: { &quot;create_alert&quot;: true, &quot;briefing&quot;: false, &quot;wallet_transfer&quot;: false }, &quot;daily_spend_sol&quot;: 0, &quot;require_confirm&quot;: true } }
+
+// 2. Let the agent propose actions from its memory
+// generate_proposals
+&gt; { &quot;agentId&quot;: &quot;…&quot; }
+{ &quot;ok&quot;: true, &quot;createdCount&quot;: 1, &quot;source&quot;: &quot;memory&quot;,
+  &quot;created&quot;: [ { &quot;id&quot;: &quot;p_…&quot;, &quot;kind&quot;: &quot;create_alert&quot;, &quot;title&quot;: &quot;Alert when $THREE crosses $0.01&quot;,
+                 &quot;rationale&quot;: &quot;You noted interest in $THREE around $0.01 — I&#39;ll watch it.&quot;, &quot;status&quot;: &quot;pending&quot; } ] }
+
+// 3. Preview before acting
+// dryrun_proposal
+&gt; { &quot;agentId&quot;: &quot;…&quot;, &quot;proposalId&quot;: &quot;p_…&quot; }
+{ &quot;ok&quot;: true, &quot;preview&quot;: { &quot;kind&quot;: &quot;create_alert&quot;, &quot;willDo&quot;: &quot;Create a real alert rule… Reversible.&quot;,
+                           &quot;checks&quot;: [ { &quot;label&quot;: &quot;Scope \&quot;create_alert\&quot; granted&quot;, &quot;ok&quot;: true } ], &quot;blocked&quot;: false } }
+
+// 4. Execute for real (reversible kind — no confirm needed)
+// execute_proposal
+&gt; { &quot;agentId&quot;: &quot;…&quot;, &quot;proposalId&quot;: &quot;p_…&quot; }
+{ &quot;ok&quot;: true, &quot;receipt&quot;: &quot;Created a price above alert.&quot;, &quot;actionId&quot;: &quot;1843&quot;, &quot;proposal&quot;: { &quot;status&quot;: &quot;executed&quot; } }
+
+// 5. Changed your mind? Undo it.
+// undo_action
+&gt; { &quot;agentId&quot;: &quot;…&quot;, &quot;proposalId&quot;: &quot;p_…&quot; }
+{ &quot;ok&quot;: true, &quot;proposal&quot;: { &quot;status&quot;: &quot;undone&quot; } }
+</code></pre>
+<p>Spending real SOL requires the owner to have granted <code>scopes.wallet_transfer</code>, set a positive <code>dailySpendSol</code>, and (unless pre-authorized) <code>execute_proposal</code> must be re-issued with <code>confirm:true</code>. All three are checked server-side. The agent spends SOL only — it never sells or sends $THREE.</p>
+<h2 id="requirements"><a class="anchor" href="#requirements" aria-label="Link to this section">#</a>Requirements</h2>
+<ul>
+<li><strong>Node.js &gt;= 20.</strong></li>
+<li>A three.ws credential (<code>THREE_WS_API_KEY</code>) for the agent owner.</li>
+<li>Network access to <code>https://three.ws</code> (or your own <code>THREE_WS_BASE</code>).</li>
+</ul>
+<h3 id="environment-variables"><a class="anchor" href="#environment-variables" aria-label="Link to this section">#</a>Environment variables</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Required</th>
+<th>Default</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>THREE_WS_API_KEY</code></td>
+<td><strong>yes</strong></td>
+<td>—</td>
+<td>three.ws API key (<code>sk_live_…</code>) or OAuth access token. Secret. Can move real SOL.</td>
+</tr>
+<tr>
+<td><code>THREE_WS_BASE</code></td>
+<td>no</td>
+<td><code>https://three.ws</code></td>
+<td>Override only when self-hosting or targeting a preview.</td>
+</tr>
+<tr>
+<td><code>THREE_WS_TIMEOUT_MS</code></td>
+<td>no</td>
+<td><code>60000</code></td>
+<td>Per-request timeout (generation runs a server-side LLM pass).</td>
+</tr>
+</tbody></table>
+<h2 id="links"><a class="anchor" href="#links" aria-label="Link to this section">#</a>Links</h2>
+<ul>
+<li>Homepage: <a href="https://three.ws">https://three.ws</a></li>
+<li>Changelog: <a href="https://three.ws/changelog">https://three.ws/changelog</a></li>
+<li>Issues: <a href="https://github.com/nirholas/three.ws/issues">https://github.com/nirholas/three.ws/issues</a></li>
+<li>License: Apache-2.0, see <a href="https://github.com/nirholas/autopilot-mcp/blob/main/LICENSE">LICENSE</a></li>
+</ul>
+<hr>
+<p align="center">
+  <sub>
+    Part of the <a href="https://three.ws">three.ws</a> SDK suite — 3D AI agents, on-chain identity, and agent payments.<br/>
+    <a href="https://three.ws">Website</a> · <a href="https://three.ws/changelog">Changelog</a> · <a href="https://github.com/nirholas/three.ws">GitHub</a>
+  </sub>
+</p>
+</main>
+<nav class="toc" aria-label="On this page"><p>On this page</p><ul><li><a href="#install">Install</a></li><li><a href="#quick-start">Quick start</a></li><li><a href="#authentication">Authentication</a></li><li><a href="#tools">Tools</a></li><li><a href="#the-loop">The loop</a></li><li><a href="#requirements">Requirements</a></li><li><a href="#links">Links</a></li></ul></nav>
+</div>
+<footer><div class="foot-in"><span>Apache-2.0 licensed</span><a href="https://github.com/nirholas/autopilot-mcp/issues">Issues</a><a href="https://github.com/nirholas/autopilot-mcp/blob/main/CONTRIBUTING.md">Contributing</a><a href="https://github.com/nirholas/autopilot-mcp/security/policy">Security</a><a href="https://three.ws">Part of three.ws</a></div></footer>
+<script>document.querySelectorAll('[data-copy]').forEach(function(b){b.addEventListener('click',function(){
+var t=b.getAttribute('data-copy');var done=function(){var o=b.textContent;b.textContent='Copied';setTimeout(function(){b.textContent=o},1400)};
+if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,function(){})}
+else{var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');done()}catch(e){}a.remove()}})});</script>
+</body>
+</html>
